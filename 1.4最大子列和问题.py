@@ -1,4 +1,15 @@
 from datetime import datetime
+def Run_time(func):
+    '''装饰器，计算函数运行时间'''
+    def run(*args,**kwargs):
+        '''装饰器，并计算运行时间'''
+        start_time = datetime.now()
+        result=func(*args,**kwargs)
+        end_time = datetime.now()
+        span=(end_time-start_time).microseconds
+        print('{}的计算结果是：{}，运行时间:{} ms'.format(func.__name__,result,span))
+    return run
+@Run_time
 def Max_SubSeq_sum_1(Seq):
     '''总复杂度为三处复杂度的积，即O(n3)'''
     N=len(Seq)
@@ -12,7 +23,8 @@ def Max_SubSeq_sum_1(Seq):
             if This_sum>Max_sum:
                 # 对比已知最大和,复杂度忽略不计
                 Max_sum=This_sum
-    print(Max_sum)
+    return Max_sum
+@Run_time
 def Max_SubSeq_sum_2(Seq):
     '''在算法1上进行改进，即O(n2)'''
     N=len(Seq)
@@ -23,7 +35,8 @@ def Max_SubSeq_sum_2(Seq):
             This_sum+=Seq[j]
             if This_sum>Max_sum:
                 Max_sum=This_sum
-    print(Max_sum)
+    return Max_sum
+@Run_time
 def Max_SubSeq_sum_3(Seq):
     '''分治法，算法复杂度为O(nlog(n))'''
     N = len(Seq)
@@ -51,7 +64,8 @@ def Max_SubSeq_sum_3(Seq):
             if Right_border>Max_Right_border:
                Max_Right_border=Right_border
         return max(Max_Left_sum,Max_Right_sum,Max_Left_border+Max_Right_border)
-    print(Divide_and_Conquer(0,N-1))
+    return Divide_and_Conquer(0,N-1)
+@Run_time
 def Max_SubSeq_sum_4(Seq):
     N=len(Seq)
     This_sum,Max_sum=0,0
@@ -62,20 +76,13 @@ def Max_SubSeq_sum_4(Seq):
             Max_sum=This_sum
         if This_sum<0:
             This_sum=0
-    print(Max_sum)
-def Run_time(fn,seq):
-    '''运行程序，并计算运行时间'''
-    start_time = datetime.now()
-    fn(seq)
-    end_time = datetime.now()
-    span=(end_time-start_time).microseconds
-    print('运行时间:{} ms'.format(span))
+    return Max_sum
 if __name__=='__main__':
     from random import randint
     Seq=[]
     for i in range(500):
         Seq.append(randint(-50,50))
-    Run_time(Max_SubSeq_sum_1,Seq)
-    Run_time(Max_SubSeq_sum_2,Seq)
-    Run_time(Max_SubSeq_sum_3,Seq)
-    Run_time(Max_SubSeq_sum_4,Seq)
+    Max_SubSeq_sum_1(Seq)
+    Max_SubSeq_sum_2(Seq)
+    Max_SubSeq_sum_3(Seq)
+    Max_SubSeq_sum_4(Seq)
