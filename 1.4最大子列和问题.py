@@ -1,4 +1,6 @@
 from datetime import datetime
+
+
 def Run_time(func):
     '''装饰器，计算函数运行时间'''
     def run(*args,**kwargs):
@@ -9,9 +11,11 @@ def Run_time(func):
         span=(end_time-start_time).microseconds
         print('{}的计算结果是：{}，运行时间:{} ms'.format(func.__name__,result,span))
     return run
+
+
 @Run_time
 def Max_SubSeq_sum_1(Seq):
-    '''总复杂度为三处复杂度的积，即O(n3)'''
+    '''暴力穷举法。总复杂度为三处复杂度的积，即O(n3)'''
     N=len(Seq)
     Max_sum=0
     for i in range(N):
@@ -24,9 +28,11 @@ def Max_SubSeq_sum_1(Seq):
                 # 对比已知最大和,复杂度忽略不计
                 Max_sum=This_sum
     return Max_sum
+
+
 @Run_time
 def Max_SubSeq_sum_2(Seq):
-    '''在算法1上进行改进，即O(n2)'''
+    '''在算法1上进行改进，添加一个缓存或备忘录，复杂度减为O(n2)'''
     N=len(Seq)
     Max_sum=0
     for i in range(N):
@@ -36,6 +42,41 @@ def Max_SubSeq_sum_2(Seq):
             if This_sum>Max_sum:
                 Max_sum=This_sum
     return Max_sum
+
+
+@Run_time
+def Max_SubSeq_sum_3_new(Seq):
+    '''递推算法不能直接加装饰器，需要用函数封装
+    2019/8/24学习二分查找法时对原算法进行精简'''
+    def Max_SubSeq_sum(Seq):
+        N = len(Seq)
+        if N == 1:
+            # 切到队列长为1为止
+            return Seq[0]
+        # 第一步，分割成左右子列
+        left_Seq = Seq[:N//2]
+        right_Seq = Seq[N//2:]
+        # 第二步，计算中分点附近最大子列和
+        # 从中分点向左右两边扫描，各取最大值相加
+        l_max, r_max = 0, 0
+        l_sum, r_sum = 0, 0
+        for l in left_Seq[::-1]:
+            # 复杂度为N/2
+            l_sum += l
+            if l_sum > l_max:
+                l_max = l_sum
+        for r in right_Seq:
+            # 复杂度为N/2
+            r_sum += r
+            if r_sum > r_max:
+                r_max = r_sum
+        # 第三步，递归求左右子列结果，并返回三者最大值
+        return max(Max_SubSeq_sum(left_Seq),
+                   Max_SubSeq_sum(right_Seq),
+                   l_max+r_max)
+    return Max_SubSeq_sum(Seq)
+
+
 @Run_time
 def Max_SubSeq_sum_3(Seq):
     '''分治法，算法复杂度为O(nlog(n))'''
@@ -65,8 +106,11 @@ def Max_SubSeq_sum_3(Seq):
                Max_Right_border=Right_border
         return max(Max_Left_sum,Max_Right_sum,Max_Left_border+Max_Right_border)
     return Divide_and_Conquer(0,N-1)
+
+
 @Run_time
 def Max_SubSeq_sum_4(Seq):
+    '''动态规划法'''
     N=len(Seq)
     This_sum,Max_sum=0,0
     for i in Seq:
@@ -77,6 +121,8 @@ def Max_SubSeq_sum_4(Seq):
         if This_sum<0:
             This_sum=0
     return Max_sum
+
+
 if __name__=='__main__':
     from random import randint
     Seq=[]
@@ -84,5 +130,6 @@ if __name__=='__main__':
         Seq.append(randint(-50,50))
     Max_SubSeq_sum_1(Seq)
     Max_SubSeq_sum_2(Seq)
+    Max_SubSeq_sum_3_new(Seq)
     Max_SubSeq_sum_3(Seq)
     Max_SubSeq_sum_4(Seq)
