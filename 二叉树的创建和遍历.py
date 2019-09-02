@@ -81,7 +81,9 @@ class BinTree:
         s = Stack()
         BT = self
         seq = ''
-        while True:
+        while BT or not s.is_empty():
+            # 若左右节点均不存在，再次出栈
+            # 栈空，循环必定截止
             while BT:
                 # 向左压栈
                 seq += BT.key
@@ -89,14 +91,6 @@ class BinTree:
                 BT = BT.leftchild
             # 出栈，转向右边
             BT = s.pop().rightchild
-            if BT is None:
-                # 右边也为空
-                if s.is_empty():
-                    # 栈空，循环结束
-                    break
-                else:
-                    # 调到某一个祖宗节点右子树
-                    BT = s.pop().rightchild
         return seq
 
     def inorder_stack(self):
@@ -104,22 +98,13 @@ class BinTree:
         s = Stack()
         BT = self
         seq = ''
-        while True:
+        while BT or not s.is_empty():
             while BT:
                 s.push(BT)
                 BT = BT.leftchild
             # 输出即将出栈元素
             seq += s.peak().key
             BT = s.pop().rightchild
-            if BT is None:
-                # 右边也为空
-                if s.is_empty():
-                    # 栈空，循环结束
-                    break
-                else:
-                    # 调到某一个祖宗节点右子树
-                    seq += s.peak().key
-                    BT = s.pop().rightchild
         return seq
 
     def postorder_stack(self):
@@ -128,7 +113,7 @@ class BinTree:
         s = Stack()
         BT = self
         seq = ''
-        while True:
+        while BT or not s.is_empty():
             while BT:
                 # 向右压栈
                 seq += BT.key
@@ -136,14 +121,6 @@ class BinTree:
                 BT = BT.rightchild
             # 出栈，转向左边
             BT = s.pop().leftchild
-            if BT is None:
-                # 左边也为空
-                if s.is_empty():
-                    # 栈空，循环结束
-                    break
-                else:
-                    # 调到某一个祖宗节点左子树
-                    BT = s.pop().leftchild
         return seq[::-1]
 
     def levelorder_queue(self):
